@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Id, Task } from "../types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { UilTrashAlt } from '@iconscout/react-unicons'
+import { TrashIcon } from "@heroicons/react/24/outline";
+
 
 interface Props {
   task: Task;
@@ -23,10 +24,7 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
     isDragging,
   } = useSortable({
     id: task.id,
-    data: {
-      type: "Task",
-      task,
-    },
+    data: { type: "Task", task },
     disabled: editMode,
   });
 
@@ -43,12 +41,9 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
   if (isDragging) {
     return (
       <div
+        className=" opacity-30 bg-mainBackgroundColor p-2.5 h-[100px] min-h-[100px] items-center flex text-left rounded-xl border-2 border-rose-500  cursor-grab relative "
         ref={setNodeRef}
         style={style}
-        className="
-        opacity-30
-      bg-mainBackgroundColor p-2.5 h-[100px] min-h-[100px] items-center flex text-left rounded-xl border-2 border-rose-500  cursor-grab relative
-      "
       />
     );
   }
@@ -56,17 +51,14 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
   if (editMode) {
     return (
       <div
+        className="bg-mainBackgroundColor p-2.5 h-[100px] min-h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative"
         ref={setNodeRef}
         style={style}
         {...attributes}
         {...listeners}
-        className="bg-mainBackgroundColor p-2.5 h-[100px] min-h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative"
       >
         <textarea
-          className="
-        h-[90%]
-        w-full resize-none border-none rounded bg-transparent text-white focus:outline-none
-        "
+          className=" h-[90%] w-full resize-none border-none rounded bg-transparent text-black focus:outline-none "
           value={task.content}
           autoFocus
           placeholder="Task content here"
@@ -89,7 +81,7 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
       {...attributes}
       {...listeners}
       onClick={toggleEditMode}
-      className="bg-mainBackgroundColor p-2.5 h-[100px] min-h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative task"
+      className="bg-mainBackgroundColor text-black p-2.5 h-[100px] min-h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative task"
       onMouseEnter={() => {
         setMouseIsOver(true);
       }}
@@ -97,7 +89,7 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
         setMouseIsOver(false);
       }}
     >
-      <p className="my-auto h-[90%] w-full overflow-y-auto overflow-x-hidden whitespace-pre-wrap">
+      <p className="my-auto h-[90%] w-full overflow-y-auto overflow-x-hidden text-black whitespace-pre-wrap">
         {task.content}
       </p>
 
@@ -108,7 +100,7 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
           }}
           className="stroke-white absolute right-4 top-1/2 -translate-y-1/2 bg-columnBackgroundColor p-2 rounded opacity-60 hover:opacity-100"
         >
-          <UilTrashAlt />
+          <TrashIcon className="h-5 w-5" />
         </button>
       )}
     </div>

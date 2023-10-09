@@ -14,8 +14,8 @@ import {
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import TaskCard from "./TaskCard";
-import { UilPlus } from '@iconscout/react-unicons'
-import { defaultCols,defaultTasks } from "./data";
+import { PlusIcon } from "@heroicons/react/24/outline";
+import { defaultCols, defaultTasks } from "./data";
 
 function KanbanBoard() {
   const [columns, setColumns] = useState<Column[]>(defaultCols);
@@ -36,18 +36,7 @@ function KanbanBoard() {
   );
 
   return (
-    <div
-      className="
-        m-auto
-        flex
-        min-h-screen
-        w-full
-        items-center
-        overflow-x-auto
-        overflow-y-hidden
-        px-[40px]
-    "
-    >
+    <div className=" m-auto flex min-h-screen w-full items-center overflow-x-auto overflow-y-hidden px-[40px] ">
       <DndContext
         sensors={sensors}
         onDragStart={onDragStart}
@@ -72,26 +61,12 @@ function KanbanBoard() {
             </SortableContext>
           </div>
           <button
+            className=" h-[60px] w-[350px] min-w-[350px] cursor-pointer rounded-lg bg-mainBackgroundColor border-2 border-columnBackgroundColor p-4 ring-rose-500 hover:ring-2 flex gap-2 "
             onClick={() => {
               createNewColumn();
             }}
-            className="
-      h-[60px]
-      w-[350px]
-      min-w-[350px]
-      cursor-pointer
-      rounded-lg
-      bg-mainBackgroundColor
-      border-2
-      border-columnBackgroundColor
-      p-4
-      ring-rose-500
-      hover:ring-2
-      flex
-      gap-2
-      "
           >
-            <UilPlus />
+            <PlusIcon className="h-5 w-5" />
             Add Column
           </button>
         </div>
