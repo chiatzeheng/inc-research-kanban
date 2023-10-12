@@ -1,4 +1,4 @@
-import KanbanBoard  from "../components/KanbanBoard";
+import KanbanBoard from "../components/KanbanBoard";
 import Banner from "../components/Banner";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -38,8 +38,8 @@ function fetchData() {
 function Dashboard() {
   return (
     <div className="h-100 w-100">
-      <Banner/>
-      <KanbanBoard/>
+      <Banner />
+      <KanbanBoard />
     </div>
   )
 }
