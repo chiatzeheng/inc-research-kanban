@@ -92,7 +92,7 @@ function KanbanBoard() {
         */}
         {createPortal(
           <DragOverlay>
-
+            {/* When a col is being dragged, make sure that a task's columnId updates accordingly and display it */}
             {activeColumn && (
               <ColumnContainer
                 column={activeColumn}
@@ -106,6 +106,7 @@ function KanbanBoard() {
                 )}
               />
             )}
+            {/* Display the active task when it's being dragged */}
             {activeTask && (
               <TaskCard
                 task={activeTask}
@@ -144,18 +145,24 @@ function KanbanBoard() {
     setTasks(newTasks);
   }
 
-  function updateTask(id: Id, content: string) {
-    const newTasks = tasks.map((task) => {
-      if (task.id !== id) return task;
-      return { ...task, content };
-    });
+// Update the content of a task 
+function updateTask(id: Id, content: string) {
+  // Create a new array of tasks, where the task with the given ID is updated with new content.
+  const newTasks = tasks.map((task) => {
+     // checks if the current task is not the one that needs to be updated.
+    if (task.id !== id) return task;
+    return { ...task, content };
+  });
 
-    setTasks(newTasks);
-  }
+  // Update the tasks state with the modified task list.
+  setTasks(newTasks);
+}
+
 
 // =====================================================================================================================
 // CRUD OF COLS  =======================================================================================================
 
+ //Creates a new col and adds it to the list of cols. 
   function createNewColumn() {
     const columnToAdd: Column = {
       id: generateId(),
@@ -165,6 +172,7 @@ function KanbanBoard() {
     setColumns([...columns, columnToAdd]);
   }
 
+  //deletes both col with a certain id but also deletes the tasks associated with it
   function deleteColumn(id: Id) {
     const filteredColumns = columns.filter((col) => col.id !== id);
     setColumns(filteredColumns);
@@ -184,7 +192,10 @@ function KanbanBoard() {
 
 // =====================================================================================================================
 // EVENT HANDLING  =====================================================================================================
+
+  // Handle the start of a drag operation.
   function onDragStart(event: DragStartEvent) {
+    // Check if the dragged item is a column or a task
     if (event.active.data.current?.type === "Column") {
       setActiveColumn(event.active.data.current.column);
       return;
