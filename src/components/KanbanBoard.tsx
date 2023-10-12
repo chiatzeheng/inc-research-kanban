@@ -24,11 +24,13 @@ function KanbanBoard() {
 
   const [tasks, setTasks] = useState<Task[]>(defaultTasks);
 
+  //Col is active only when it is being moved. activeColumn is a Column type which contains the id and title
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
 
+  //Task is active only when it is being moved. activeTask is a Task type which contains the id, columnId, content
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
- // Defines the user interaction criteria to activate the Pointer Sensor
+  // Defines the user interaction criteria to activate the Pointer Sensor
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -36,6 +38,7 @@ function KanbanBoard() {
       },
     })
   );
+
 
   return (
     <div className="bg-blue-100 m-auto flex min-h-screen w-full items-center overflow-x-auto overflow-y-hidden px-[40px] ">
@@ -50,7 +53,7 @@ function KanbanBoard() {
 
         //Draggable item dropped
         onDragEnd={onDragEnd}
-        
+
         //draggable item is held over a droppable container
         onDragOver={onDragOver}
       >
@@ -82,8 +85,14 @@ function KanbanBoard() {
           </button>
         </div>
 
+        {/*
+          Display a visual overlay for draggable items during drag operations.
+          When an item is being dragged, it visually indicates that it can be moved out of its container.
+          This overlay helps users understand where the item can be placed when dropped.
+        */}
         {createPortal(
           <DragOverlay>
+
             {activeColumn && (
               <ColumnContainer
                 column={activeColumn}
@@ -111,18 +120,27 @@ function KanbanBoard() {
     </div>
   );
 
+// CUD OF TASKS =======================================================================================================
+
+  // Creates a new task and adds it to the list of tasks. 
   function createTask(columnId: Id) {
+    // Generate a unique task ID and initialize a new task object.
     const newTask: Task = {
-      id: generateId(),
-      columnId,
-      content: `Task ${tasks.length + 1}`,
+      id: generateId(), // Generate a unique ID (random number) for the task.
+      columnId, // Associate the task with the specified column.
+      content: `Task ${tasks.length + 1}`, //Default task
     };
 
+    // adds new task to the lisat
     setTasks([...tasks, newTask]);
   }
 
+  // Deletes a task with the specified ID from the list of tasks.
   function deleteTask(id: Id) {
+    // Create a new array of tasks, excluding the task with the given ID.
     const newTasks = tasks.filter((task) => task.id !== id);
+
+    // Update the tasks state with the new array, effectively removing the task.
     setTasks(newTasks);
   }
 
@@ -134,6 +152,9 @@ function KanbanBoard() {
 
     setTasks(newTasks);
   }
+
+// =====================================================================================================================
+// CRUD OF COLS  =======================================================================================================
 
   function createNewColumn() {
     const columnToAdd: Column = {
@@ -161,6 +182,8 @@ function KanbanBoard() {
     setColumns(newColumns);
   }
 
+// =====================================================================================================================
+// EVENT HANDLING  =====================================================================================================
   function onDragStart(event: DragStartEvent) {
     if (event.active.data.current?.type === "Column") {
       setActiveColumn(event.active.data.current.column);
@@ -243,6 +266,8 @@ function KanbanBoard() {
     }
   }
 }
+
+// =====================================================================================================================
 
 function generateId() {
   /* Generate a random number between 0 and 10000 */
