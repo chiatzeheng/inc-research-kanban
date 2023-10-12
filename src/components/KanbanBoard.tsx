@@ -28,20 +28,30 @@ function KanbanBoard() {
 
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
+ // Defines the user interaction criteria to activate the Pointer Sensor
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 10,
+        distance: 10, // Minimum distance for activation
       },
     })
   );
 
   return (
     <div className="bg-blue-100 m-auto flex min-h-screen w-full items-center overflow-x-auto overflow-y-hidden px-[40px] ">
+
+      {/* provider makes use of the React Context API to share data between draggable and droppable components and hooks. */}
       <DndContext
+        //sensors help dnd detect user interaction
         sensors={sensors}
+
+        //when activation constraints declared in the sensors are triggered
         onDragStart={onDragStart}
+
+        //Draggable item dropped
         onDragEnd={onDragEnd}
+        
+        //draggable item is held over a droppable container
         onDragOver={onDragOver}
       >
         <div className="m-auto flex gap-4">
