@@ -18,6 +18,8 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import { defaultCols, defaultTasks } from "./data";
 
 function KanbanBoard() {
+
+  
   const [columns, setColumns] = useState<Column[]>(defaultCols);
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
 

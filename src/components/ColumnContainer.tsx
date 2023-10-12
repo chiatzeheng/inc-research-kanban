@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import TaskCard from "./TaskCard";
 
+// Interface so that the props passed in needs to have all these properties
 interface Props {
   column: Column;
   deleteColumn: (id: Id) => void;
@@ -60,6 +61,7 @@ function ColumnContainer({ column, deleteColumn, updateColumn, createTask, tasks
       style={style}
       className=" bg-columnBackgroundColor w-[350px] h-[500px] max-h-[500px] rounded-md flex flex-col"
     >
+      
       <div
         className=" bg-mainBackgroundColor text-md h-[60px] cursor-grab rounded-md rounded-b-none p-3 font-bold border-columnBackgroundColor border-4 flex items-center justify-between "
         {...attributes}
