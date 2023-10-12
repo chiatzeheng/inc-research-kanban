@@ -207,23 +207,31 @@ function updateTask(id: Id, content: string) {
     }
   }
 
+  // Handles what happens after you drop an item
   function onDragEnd(event: DragEndEvent) {
+
+    //reset column and task
     setActiveColumn(null);
     setActiveTask(null);
-
+    
     const { active, over } = event;
+
+    // if over is false, that means draggable has not dropped on valid droppables
     if (!over) return;
 
     const activeId = active.id;
     const overId = over.id;
 
+    // If the active and over elements have the same ID, no action is needed
     if (activeId === overId) return;
 
+    // Check if the active element is a column. if not, return
     const isActiveAColumn = active.data.current?.type === "Column";
     if (!isActiveAColumn) return;
 
     console.log("DRAG END");
-
+    
+    // Update the state of 'columns' by moving the active column to the position of 'over' column
     setColumns((columns) => {
       const activeColumnIndex = columns.findIndex((col) => col.id === activeId);
 
@@ -233,6 +241,7 @@ function updateTask(id: Id, content: string) {
     });
   }
 
+  // Handles what happens when an item is dragged over a droppable column
   function onDragOver(event: DragOverEvent) {
     const { active, over } = event;
     if (!over) return;
