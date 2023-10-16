@@ -160,6 +160,7 @@ function KanbanBoard() {
     const columnToAdd: Column = {
       id: generateId(),
       title: `Column ${columns.length + 1}`,
+      color: getColumnColors()
     };
 
     setColumns([...columns, columnToAdd]);
@@ -285,5 +286,15 @@ function generateId() {
   /* Generate a random number between 0 and 10000 */
   return Math.floor(Math.random() * 10001);
 }
+
+// =========================================================================
+// This is to generate a color for each columns
+const getColumnColors = (): string => {
+  const columnColors: string[] = ["bg-teal-200", "bg-pink-200", "bg-amber-200"];
+  const colorIndex: number = Math.floor(Math.random() * 3);
+  let styling = "text-md h-[60px] cursor-grab rounded-md rounded-b-none p-3 font-bold border-columnBackgroundColor border-4 flex items-center justify-between " + columnColors[colorIndex]
+  return styling;
+};
+
 
 export default KanbanBoard;

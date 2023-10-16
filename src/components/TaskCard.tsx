@@ -4,7 +4,6 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { TrashIcon } from "@heroicons/react/24/outline";
 
-
 interface Props {
   task: Task;
   deleteTask: (id: Id) => void;
@@ -89,6 +88,10 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
         setMouseIsOver(false);
       }}
     >
+      <div className="relative bg-slate-100 border p-4 rounded-lg">
+        <div className="w-4 h-full absolute right-0 top-0 cursor-grab bg-teal-200 rounded-sm" />
+        Your content here
+      </div>
       <p className="my-auto h-[90%] w-full overflow-y-auto overflow-x-hidden text-black whitespace-pre-wrap">
         {task.content}
       </p>

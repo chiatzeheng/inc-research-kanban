@@ -21,13 +21,6 @@ interface Props {
   tasks: Task[];
 }
 
-const getColumnColors = (): string => {
-  const columnColors: string[] = ["bg-teal-200", "bg-pink-200", "bg-amber-200"];
-  const colorIndex: number = Math.floor(Math.random() * 2);
-
-  return columnColors[colorIndex];
-};
-
 //These props will be found in KanbanBoard
 function ColumnContainer({
   column,
@@ -83,11 +76,11 @@ function ColumnContainer({
     <div
       ref={setNodeRef}
       style={style}
-      className=" bg-columnBackgroundColor w-[350px] h-[500px] max-h-[500px] rounded-3xl flex flex-col"
+      className="bg-white w-[350px] h-[500px] max-h-[500px] rounded-xl flex flex-col"
     >
-    {/* This is the column's header color  */}
+      {/* This is the column's header color  */}
       <div
-        className=" text-md h-[60px] cursor-grab rounded-md rounded-b-none p-3 font-bold border-columnBackgroundColor border-4 flex items-center justify-between "
+        className={column.color}
         {...attributes}
         {...listeners}
         // When column header is clicked, it will be editable
@@ -95,7 +88,6 @@ function ColumnContainer({
           setEditMode(true);
         }}
       >
-
         <div className="flex gap-2">
           <div className=" flex justify-center items-center bg-columnBackgroundColor px-2 py-1 text-sm rounded-full ">
             0
@@ -136,6 +128,7 @@ function ColumnContainer({
 
       {/* Column task container */}
       <div className="flex flex-grow flex-col gap-4 p-2 overflow-x-hidden overflow-y-auto">
+
         {/* This SortableContext is for the columnlist of task */}
         <SortableContext items={tasksIds}>
           {tasks.map((task) => (

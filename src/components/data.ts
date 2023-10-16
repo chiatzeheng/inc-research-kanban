@@ -5,14 +5,17 @@ import { Column,  Task } from "../types";
     {
       id: "todo",
       title: "Todo",
+      color: "text-md h-[60px] cursor-grab rounded-md rounded-b-none p-3 font-bold border-columnBackgroundColor border-4 flex items-center justify-between bg-teal-200"
     },
     {
       id: "doing",
       title: "Work in progress",
+      color: "text-md h-[60px] cursor-grab rounded-md rounded-b-none p-3 font-bold border-columnBackgroundColor border-4 flex items-center justify-between bg-pink-200"
     },
     {
       id: "done",
       title: "Done",
+      color: "text-md h-[60px] cursor-grab rounded-md rounded-b-none p-3 font-bold border-columnBackgroundColor border-4 flex items-center justify-between bg-amber-200"
     },
   ];
   
