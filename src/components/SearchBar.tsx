@@ -44,10 +44,10 @@ export default function SearchBar() {
         });
 
   return (
-    <div>
+    <div className="p-2">
       <button
         onClick={() => setOpen(true)}
-        className="absolute w-8 h-8 "
+        className="absolute w-9 h-9"
       >
         <MagnifyingGlassIcon />
       </button>

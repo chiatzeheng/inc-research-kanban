@@ -18,7 +18,6 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import { defaultCols, defaultTasks } from "./data";
 
 function KanbanBoard() {
-
   const [columns, setColumns] = useState<Column[]>(defaultCols);
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
 
@@ -39,26 +38,21 @@ function KanbanBoard() {
     })
   );
 
-
   return (
-    <div className="bg-blue-100 m-auto flex min-h-screen w-full items-center overflow-x-auto overflow-y-hidden px-[40px] ">
-
+    <div className="bg-blue-100 m-auto flex min-h-screen w-full items-center p-4 ">
       {/* provider makes use of the React Context API to share data between draggable and droppable components and hooks. */}
       <DndContext
         //sensors help dnd detect user interaction
         sensors={sensors}
-
         //when activation constraints declared in the sensors are triggered
         onDragStart={onDragStart}
-
         //Draggable item dropped
         onDragEnd={onDragEnd}
-
         //draggable item is held over a droppable container
         onDragOver={onDragOver}
       >
-        <div className="m-auto flex gap-4">
-          <div className="flex gap-4">
+        <div className="m-auto gap-4 ">
+          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <SortableContext items={columnsId}>
               {columns.map((col) => (
                 <ColumnContainer
@@ -73,16 +67,16 @@ function KanbanBoard() {
                 />
               ))}
             </SortableContext>
+            {/* Button to add a new column */}
+            <button
+              className="grid place-content-center w-[350px] h-[500px] max-h-[500px] bg-slate-200 shadow-md cursor-pointer rounded-lg bg-mainBackgroundColor border-columnBackgroundColor p-4 ring-rose-500 hover:ring-2 gap-2 "
+              onClick={() => {
+                createNewColumn();
+              }}
+            >
+              <PlusIcon className="w-[100px] h-[100px]" />
+            </button>
           </div>
-          <button
-            className=" h-[60px] w-[350px] min-w-[350px] cursor-pointer rounded-lg bg-mainBackgroundColor border-2 border-columnBackgroundColor p-4 ring-rose-500 hover:ring-2 flex gap-2 "
-            onClick={() => {
-              createNewColumn();
-            }}
-          >
-            <PlusIcon className="h-5 w-5" />
-            Add Column
-          </button>
         </div>
 
         {/*
@@ -121,9 +115,9 @@ function KanbanBoard() {
     </div>
   );
 
-// CUD OF TASKS =======================================================================================================
+  // CUD OF TASKS =======================================================================================================
 
-  // Creates a new task and adds it to the list of tasks. 
+  // Creates a new task and adds it to the list of tasks.
   function createTask(columnId: Id) {
     // Generate a unique task ID and initialize a new task object.
     const newTask: Task = {
@@ -145,24 +139,23 @@ function KanbanBoard() {
     setTasks(newTasks);
   }
 
-// Update the content of a task 
-function updateTask(id: Id, content: string) {
-  // Create a new array of tasks, where the task with the given ID is updated with new content.
-  const newTasks = tasks.map((task) => {
-     // checks if the current task is not the one that needs to be updated.
-    if (task.id !== id) return task;
-    return { ...task, content };
-  });
+  // Update the content of a task
+  function updateTask(id: Id, content: string) {
+    // Create a new array of tasks, where the task with the given ID is updated with new content.
+    const newTasks = tasks.map((task) => {
+      // checks if the current task is not the one that needs to be updated.
+      if (task.id !== id) return task;
+      return { ...task, content };
+    });
 
-  // Update the tasks state with the modified task list.
-  setTasks(newTasks);
-}
+    // Update the tasks state with the modified task list.
+    setTasks(newTasks);
+  }
 
+  // =====================================================================================================================
+  // CRUD OF COLS  =======================================================================================================
 
-// =====================================================================================================================
-// CRUD OF COLS  =======================================================================================================
-
- //Creates a new col and adds it to the list of cols. 
+  //Creates a new col and adds it to the list of cols.
   function createNewColumn() {
     const columnToAdd: Column = {
       id: generateId(),
@@ -190,8 +183,8 @@ function updateTask(id: Id, content: string) {
     setColumns(newColumns);
   }
 
-// =====================================================================================================================
-// EVENT HANDLING  =====================================================================================================
+  // =====================================================================================================================
+  // EVENT HANDLING  =====================================================================================================
 
   // Handle the start of a drag operation.
   function onDragStart(event: DragStartEvent) {
@@ -209,11 +202,10 @@ function updateTask(id: Id, content: string) {
 
   // Handles what happens after you drop an item
   function onDragEnd(event: DragEndEvent) {
-
     //reset column and task
     setActiveColumn(null);
     setActiveTask(null);
-    
+
     const { active, over } = event;
 
     // if over is false, that means draggable has not dropped on valid droppables
@@ -230,7 +222,7 @@ function updateTask(id: Id, content: string) {
     if (!isActiveAColumn) return;
 
     console.log("DRAG END");
-    
+
     // Update the state of 'columns' by moving the active column to the position of 'over' column
     setColumns((columns) => {
       const activeColumnIndex = columns.findIndex((col) => col.id === activeId);

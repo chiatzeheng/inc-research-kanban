@@ -37,7 +37,7 @@ function fetchData() {
 
 function Dashboard() {
   return (
-    <div className="h-100 w-100">
+    <div className="bg-slate-100 h-100 w-100">
       <Banner />
       <KanbanBoard />
     </div>

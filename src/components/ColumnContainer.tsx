@@ -21,8 +21,23 @@ interface Props {
   tasks: Task[];
 }
 
+const getColumnColors = (): string => {
+  const columnColors: string[] = ["bg-teal-200", "bg-pink-200", "bg-amber-200"];
+  const colorIndex: number = Math.floor(Math.random() * 2);
+
+  return columnColors[colorIndex];
+};
+
 //These props will be found in KanbanBoard
-function ColumnContainer({ column, deleteColumn, updateColumn, createTask, tasks, deleteTask, updateTask, }: Props) {
+function ColumnContainer({
+  column,
+  deleteColumn,
+  updateColumn,
+  createTask,
+  tasks,
+  deleteTask,
+  updateTask,
+}: Props) {
   const [editMode, setEditMode] = useState(false);
 
   // Memoize the array of task IDs by mapping the tasks array
@@ -68,11 +83,11 @@ function ColumnContainer({ column, deleteColumn, updateColumn, createTask, tasks
     <div
       ref={setNodeRef}
       style={style}
-      className=" bg-columnBackgroundColor w-[350px] h-[500px] max-h-[500px] rounded-md flex flex-col"
+      className=" bg-columnBackgroundColor w-[350px] h-[500px] max-h-[500px] rounded-3xl flex flex-col"
     >
-
+    {/* This is the column's header color  */}
       <div
-        className=" bg-green-500 text-md h-[60px] cursor-grab rounded-md rounded-b-none p-3 font-bold border-columnBackgroundColor border-4 flex items-center justify-between "
+        className=" text-md h-[60px] cursor-grab rounded-md rounded-b-none p-3 font-bold border-columnBackgroundColor border-4 flex items-center justify-between "
         {...attributes}
         {...listeners}
         // When column header is clicked, it will be editable
@@ -80,6 +95,7 @@ function ColumnContainer({ column, deleteColumn, updateColumn, createTask, tasks
           setEditMode(true);
         }}
       >
+
         <div className="flex gap-2">
           <div className=" flex justify-center items-center bg-columnBackgroundColor px-2 py-1 text-sm rounded-full ">
             0
