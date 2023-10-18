@@ -88,26 +88,29 @@ function TaskCard({ task, deleteTask, updateTask, columnColor }: Props) {
         setMouseIsOver(false);
       }}
     >
-      <div className="relative bg-slate-100 border p-4 rounded-lg text-black h-[100px] min-h-[100px] items-center flex text-left hover:ring-2 hover:ring-inset hover:ring-rose-500 task" onClick={toggleEditMode} >
+      {/* h-[100px] min-h-[100px]  */}
+      <div className="relative bg-slate-100 border p-4 rounded-lg text-black items-center flex text-left hover:ring-2 hover:ring-inset hover:ring-rose-500 task" onClick={toggleEditMode} >
         <p className="my-auto h-[90%] w-full overflow-y-auto overflow-x-hidden text-black whitespace-pre-wrap">
           {task.content}
         </p>
         <div className={"w-2 h-full absolute left-0 mr-5 top-0 cursor-grab rounded-md " + columnColor} {...attributes}
           {...listeners} />
 
+        {mouseIsOver && (
+          <button
+            onClick={() => {
+              deleteTask(task.id);
+            }}
+            className="stroke-white absolute right-4 top-1/2 -translate-y-1/2 bg-columnBackgroundColor p-2 rounded opacity-60 hover:opacity-100"
+          >
+            <TrashIcon className="h-5 w-5" />
+          </button>
+        )}
+
       </div>
 
 
-      {mouseIsOver && (
-        <button
-          onClick={() => {
-            deleteTask(task.id);
-          }}
-          className="stroke-white absolute right-4 top-1/2 -translate-y-1/2 bg-columnBackgroundColor p-2 rounded opacity-60 hover:opacity-100"
-        >
-          <TrashIcon className="h-5 w-5" />
-        </button>
-      )}
+
     </div>
   );
 }

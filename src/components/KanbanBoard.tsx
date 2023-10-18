@@ -293,7 +293,7 @@ function generateId() {
 const getColumnColors = (): string => {
   const columnColors: string[] = ["bg-teal-200", "bg-pink-200", "bg-amber-200"];
   const colorIndex: number = Math.floor(Math.random() * 3);
-  let styling = "text-md h-[60px] cursor-grab rounded-md rounded-b-none p-3 font-bold border-columnBackgroundColor border-4 flex items-center justify-between " + columnColors[colorIndex]
+  let styling = columnColors[colorIndex]
   return styling;
 };
 

@@ -89,8 +89,8 @@ function ColumnContainer({
         }}
       >
         <div className="flex gap-2">
-          <div className=" flex justify-center items-center bg-columnBackgroundColor px-2 py-1 text-sm rounded-full ">
-            0
+          <div className="bg-white flex justify-center items-center px-2 py-1 w-8 h-8 text-sm rounded-full">
+            {tasks.length} 
           </div>
 
           {/* When the column header is not being edited, show the title  */}
