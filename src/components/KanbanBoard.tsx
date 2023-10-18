@@ -39,7 +39,7 @@ function KanbanBoard() {
   );
 
   return (
-    <div className="bg-blue-100 m-auto flex min-h-screen w-full items-center p-4 ">
+    <div className="m-auto flex min-h-screen w-full items-center p-4 ">
       {/* provider makes use of the React Context API to share data between draggable and droppable components and hooks. */}
       <DndContext
         //sensors help dnd detect user interaction
@@ -106,6 +106,7 @@ function KanbanBoard() {
                 task={activeTask}
                 deleteTask={deleteTask}
                 updateTask={updateTask}
+                columnColor="bg-black"
               />
             )}
           </DragOverlay>,

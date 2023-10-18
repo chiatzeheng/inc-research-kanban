@@ -76,11 +76,11 @@ function ColumnContainer({
     <div
       ref={setNodeRef}
       style={style}
-      className="bg-white w-[350px] h-[500px] max-h-[500px] rounded-xl flex flex-col"
+      className="bg-white w-[365px] h-[500px] max-h-[500px] rounded-xl flex flex-col"
     >
       {/* This is the column's header color  */}
       <div
-        className={column.color}
+        className={"text-md h-[60px] cursor-grab rounded-md rounded-b-none p-3 font-bold border-columnBackgroundColor border-4 flex items-center justify-between "+column.color}
         {...attributes}
         {...listeners}
         // When column header is clicked, it will be editable
@@ -133,6 +133,7 @@ function ColumnContainer({
         <SortableContext items={tasksIds}>
           {tasks.map((task) => (
             <TaskCard
+              columnColor={column.color}
               key={task.id}
               task={task}
               deleteTask={deleteTask}
@@ -143,7 +144,7 @@ function ColumnContainer({
       </div>
       {/* Column footer */}
       <button
-        className="flex gap-2 items-center border-columnBackgroundColor border-2 rounded-md p-4 border-x-columnBackgroundColor hover:bg-mainBackgroundColor hover:text-rose-500 active:bg-black"
+        className="flex gap-2 items-center border-columnBackgroundColor  rounded-md p-4 border-x-columnBackgroundColor hover:bg-mainBackgroundColor hover:text-rose-500 active:bg-black"
         onClick={() => {
           createTask(column.id);
         }}

@@ -8,9 +8,10 @@ interface Props {
   task: Task;
   deleteTask: (id: Id) => void;
   updateTask: (id: Id, content: string) => void;
+  columnColor: string
 }
 
-function TaskCard({ task, deleteTask, updateTask }: Props) {
+function TaskCard({ task, deleteTask, updateTask, columnColor }: Props) {
   const [mouseIsOver, setMouseIsOver] = useState(false);
   const [editMode, setEditMode] = useState(true);
 
@@ -50,14 +51,14 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
   if (editMode) {
     return (
       <div
-        className="bg-mainBackgroundColor p-2.5 h-[100px] min-h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative"
+        className="p-2.5 h-[100px] min-h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative"
         ref={setNodeRef}
         style={style}
         {...attributes}
         {...listeners}
       >
         <textarea
-          className=" h-[90%] w-full resize-none border-none rounded bg-transparent text-black focus:outline-none "
+          className="h-[90%] w-full resize-none border-none rounded bg-transparent text-black focus:outline-none "
           value={task.content}
           autoFocus
           placeholder="Task content here"
@@ -77,10 +78,9 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
     <div
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}
-      onClick={toggleEditMode}
-      className="bg-mainBackgroundColor text-black p-2.5 h-[100px] min-h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative task"
+
+
+      className=""
       onMouseEnter={() => {
         setMouseIsOver(true);
       }}
@@ -88,13 +88,15 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
         setMouseIsOver(false);
       }}
     >
-      <div className="relative bg-slate-100 border p-4 rounded-lg">
-        <div className="w-4 h-full absolute right-0 top-0 cursor-grab bg-teal-200 rounded-sm" />
-        Your content here
+      <div className="relative bg-slate-100 border p-4 rounded-lg text-black h-[100px] min-h-[100px] items-center flex text-left hover:ring-2 hover:ring-inset hover:ring-rose-500 task" onClick={toggleEditMode} >
+        <p className="my-auto h-[90%] w-full overflow-y-auto overflow-x-hidden text-black whitespace-pre-wrap">
+          {task.content}
+        </p>
+        <div className={"w-2 h-full absolute left-0 mr-5 top-0 cursor-grab rounded-md " + columnColor} {...attributes}
+          {...listeners} />
+
       </div>
-      <p className="my-auto h-[90%] w-full overflow-y-auto overflow-x-hidden text-black whitespace-pre-wrap">
-        {task.content}
-      </p>
+
 
       {mouseIsOver && (
         <button
