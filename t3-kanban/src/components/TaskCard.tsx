@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Id, Task } from "@/types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -38,10 +38,29 @@ function TaskCard({ task, deleteTask, updateTask, columnColor }: Props) {
     setMouseIsOver(false);
   };
 
+  // whole section here is just to make sure textarea expands together with the text
+  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const handleInput = (event: React.FormEvent<HTMLTextAreaElement>) => {
+    const target = event.target as HTMLTextAreaElement;
+    target.style.height = "auto";
+    target.style.height = `${target.scrollHeight}px`;
+  };
+
+  useEffect(() => {
+    if (editMode && textAreaRef.current) {
+      const textarea = textAreaRef.current;
+      textarea.style.height = "auto";
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  }, [editMode]);
+
+  // end of section
+
   if (isDragging) {
     return (
       <div
-        className=" bg-mainBackgroundColor relative flex h-[100px] min-h-[100px] cursor-grab items-center rounded-xl border-2 border-rose-500 p-2.5  text-left opacity-30 "
+        className=" bg-mainBackgroundColor relative flex min-h-[50px] cursor-grab items-center rounded-lg border-2 border-rose-500 p-4 text-left opacity-30 "
         ref={setNodeRef}
         style={style}
       />
@@ -51,7 +70,7 @@ function TaskCard({ task, deleteTask, updateTask, columnColor }: Props) {
   if (editMode) {
     return (
       <div
-        className="relative flex cursor-grab items-center rounded-lg bg-white p-4 text-left text-black hover:ring-2 hover:ring-inset hover:ring-rose-500"
+        className="relative flex h-auto cursor-grab items-center rounded-lg bg-white p-4 text-left text-black hover:ring-2 hover:ring-inset hover:ring-rose-500"
         ref={setNodeRef}
         style={style}
         {...attributes}
@@ -59,7 +78,7 @@ function TaskCard({ task, deleteTask, updateTask, columnColor }: Props) {
       >
         <div
           className={
-            "absolute top-0 -ml-4 -mt-1 flex h-5 w-full cursor-grab justify-center rounded-md "
+            "absolute top-0 -ml-4 -mt-1 flex h-6 w-full cursor-grab justify-center rounded-md "
           }
           {...attributes}
           {...listeners}
@@ -67,7 +86,9 @@ function TaskCard({ task, deleteTask, updateTask, columnColor }: Props) {
           <EllipsisHorizontalIcon className="h-8 w-8 text-slate-300" />
         </div>
         <textarea
-          className="h-[90%] w-full resize-none rounded border-none bg-transparent text-black focus:outline-none "
+          ref={textAreaRef}
+          onInput={handleInput}
+          className="h-auto w-full resize-none rounded border-none bg-transparent text-black focus:outline-none "
           value={task.content}
           autoFocus
           placeholder="Task content here"
@@ -100,12 +121,12 @@ function TaskCard({ task, deleteTask, updateTask, columnColor }: Props) {
         className="task relative flex items-center rounded-lg  bg-white p-4 text-left text-black hover:shadow-md hover:ring-0 "
         onClick={toggleEditMode}
       >
-        <p className="my-auto h-[90%] w-full overflow-y-auto overflow-x-hidden whitespace-pre-wrap text-black">
+        <p className="my-auto h-auto w-full  overflow-x-hidden whitespace-pre-wrap text-black">
           {task.content}
         </p>
         <div
           className={
-            "absolute top-0 -ml-4 -mt-1 flex h-5 w-full cursor-grab justify-center rounded-md "
+            "absolute top-0 -ml-4 -mt-1 flex h-6 w-full cursor-grab justify-center rounded-md "
           }
           {...attributes}
           {...listeners}
