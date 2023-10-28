@@ -1,5 +1,5 @@
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
-import { Column, Id, Task } from "../types";
+import { Column, Id, Task } from "@/types";
 import { CSS } from "@dnd-kit/utilities";
 import { useMemo, useState } from "react";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
@@ -67,7 +67,7 @@ function ColumnContainer({
       <div
         ref={setNodeRef}
         style={style}
-        className=" bg-purple-100 opacity-40 border-2 border-pink-500 w-[350px] h-[500px] max-h-[500px] rounded-md flex flex-col "
+        className=" mx-5 flex h-[500px] max-h-[500px]  w-72 flex-col rounded-3xl border-2 border-pink-500 bg-purple-100 opacity-40 "
       ></div>
     );
   }
@@ -76,11 +76,17 @@ function ColumnContainer({
     <div
       ref={setNodeRef}
       style={style}
-      className="bg-white w-[365px] h-[500px] max-h-[500px] rounded-xl flex flex-col"
+      className={
+        "mx-5 flex h-[500px] max-h-[500px] w-72 flex-col rounded-3xl shadow-md " +
+        column.color
+      }
     >
       {/* This is the column's header color  */}
       <div
-        className={"text-md h-[60px] cursor-grab rounded-md rounded-b-none p-3 font-bold border-columnBackgroundColor border-4 flex items-center justify-between "+column.color}
+        className={
+          "text-md flex h-[60px] cursor-grab items-center justify-between rounded-3xl p-3 font-bold " +
+          column.color
+        }
         {...attributes}
         {...listeners}
         // When column header is clicked, it will be editable
@@ -88,18 +94,27 @@ function ColumnContainer({
           setEditMode(true);
         }}
       >
-        <div className="flex gap-2">
-          <div className="bg-white flex justify-center items-center px-2 py-1 w-8 h-8 text-sm rounded-full">
-            {tasks.length} 
+        <div className={`flex items-center gap-2`}>
+          <div
+            className={`min-w-8 flex h-8 items-center justify-center rounded-3xl px-2 py-1 text-sm text-gray-700 text-opacity-40`}
+          >
+            {tasks.length}
           </div>
 
           {/* When the column header is not being edited, show the title  */}
-          {!editMode && column.title}
+          {!editMode && (
+            <span className={`w-full ${column.textColor}`}>
+              {!editMode && column.title}
+            </span>
+          )}
 
           {/* However when it is being edited, change the bg fo the text input */}
           {editMode && (
             <input
-              className="bg-black focus:border-rose-500 border rounded outline-none px-2"
+              className={
+                "-ml-1 w-full rounded bg-gray-700 bg-opacity-5 px-1 outline-none " +
+                column.textColor
+              }
               value={column.title}
               onChange={(e) => updateColumn(column.id, e.target.value)}
               autoFocus
@@ -127,8 +142,7 @@ function ColumnContainer({
       </div>
 
       {/* Column task container */}
-      <div className="flex flex-grow flex-col gap-4 p-2 overflow-x-hidden overflow-y-auto">
-
+      <div className="flex flex-grow flex-col gap-4 overflow-y-auto overflow-x-hidden p-2">
         {/* This SortableContext is for the columnlist of task */}
         <SortableContext items={tasksIds}>
           {tasks.map((task) => (
@@ -144,7 +158,7 @@ function ColumnContainer({
       </div>
       {/* Column footer */}
       <button
-        className="flex gap-2 items-center border-columnBackgroundColor  rounded-md p-4 border-x-columnBackgroundColor hover:bg-mainBackgroundColor hover:text-rose-500 active:bg-black"
+        className="border-columnBackgroundColor border-x-columnBackgroundColor hover:bg-mainBackgroundColor flex  items-center gap-2 rounded-md p-4 hover:text-rose-500 active:bg-black"
         onClick={() => {
           createTask(column.id);
         }}

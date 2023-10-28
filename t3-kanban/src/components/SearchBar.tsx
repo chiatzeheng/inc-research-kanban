@@ -28,7 +28,7 @@ const items = [
   },
 ];
 
-function classNames(...classes) {
+function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
 
@@ -45,7 +45,7 @@ export default function SearchBar() {
 
   return (
     <div className="p-2">
-      <button onClick={() => setOpen(true)} className="absolute h-9 w-9">
+      <button onClick={() => setOpen(true)} className="h-6 w-6 text-gray-500">
         <MagnifyingGlassIcon />
       </button>
 
@@ -86,7 +86,7 @@ export default function SearchBar() {
                       aria-hidden="true"
                     />
                     <Combobox.Input
-                      className="h-12 w-full !border-none hover:!border-none focus:!border-none focus:!ring-none bg-transparent pl-11 pr-4 text-gray-900 placeholder:text-gray-400 focus:border-none focus:ring-0 sm:text-sm"
+                      className="focus:!ring-none h-12 w-full !border-none bg-transparent pl-11 pr-4 text-gray-900 placeholder:text-gray-400 hover:!border-none focus:!border-none focus:border-none focus:ring-0 sm:text-sm"
                       placeholder="Search..."
                       onChange={(event) => setQuery(event.target.value)}
                     />
