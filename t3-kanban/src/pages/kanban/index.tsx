@@ -1,4 +1,4 @@
-import { useMemo, useState, Fragment } from "react";
+import { useMemo, useState, Fragment, useEffect } from "react";
 import { Column, Id, Task } from "@/types";
 import ColumnContainer from "@/components/ColumnContainer";
 import Layout from "@/components/Layout";
@@ -20,6 +20,7 @@ import {
   MagnifyingGlassIcon,
   PlusIcon,
   BarsArrowDownIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { defaultCols, defaultTasks } from "@/components/data";
 import SearchBarModal from "@/components/SearchBarModal";
@@ -43,6 +44,7 @@ function KanbanBoard() {
 
   const [openSearch, setOpenSearch] = useState<boolean>(false);
   const [query, setQuery] = useState<string>("");
+  const [ifFiltered, setIfFiltered] = useState<boolean>(false);
 
   // Defines the user interaction criteria to activate the Pointer Sensor
   const sensors = useSensors(
@@ -52,6 +54,45 @@ function KanbanBoard() {
       },
     }),
   );
+
+  useEffect(() => {
+    if (query.trim().length === 0 || query === undefined) {
+      setIfFiltered(false);
+      return setTasks(defaultTasks);
+    } else {
+      const filteredTasks = tasks.filter((task) =>
+        task.content.toLowerCase().includes(query.toLowerCase()),
+      );
+      setIfFiltered(true);
+      return setTasks(filteredTasks);
+    }
+  }, [query]);
+
+  function sortTasks(type: string) {
+    let sortedTasks;
+    switch (type) {
+      case "Latest Update":
+        sortedTasks = [...tasks].sort(
+          (a: Task, b: Task) =>
+            b.dateCreated.getTime() - a.dateCreated.getTime(),
+        );
+        setTasks(sortedTasks);
+        break;
+      case "A-Z":
+        sortedTasks = [...tasks].sort((a, b) =>
+          a.content.localeCompare(b.content),
+        );
+
+        console.log("hello");
+        setTasks(sortedTasks);
+
+        break;
+      case "Most Viewed":
+        break;
+      default:
+        break;
+    }
+  }
 
   return (
     <Layout>
@@ -88,6 +129,7 @@ function KanbanBoard() {
                             : "text-gray-700",
                           "flex w-full justify-start px-4 py-2 text-sm",
                         )}
+                        onClick={() => sortTasks("Latest Update")}
                       >
                         Latest Update
                       </button>
@@ -102,6 +144,7 @@ function KanbanBoard() {
                             : "text-gray-700",
                           "flex w-full justify-start px-4 py-2 text-sm",
                         )}
+                        onClick={() => sortTasks("A-Z")}
                       >
                         A-Z
                       </button>
@@ -144,10 +187,20 @@ function KanbanBoard() {
           </Menu>
 
           <button
-            onClick={() => setOpenSearch(true)}
-            className="flex items-center rounded-md hover:bg-slate-100 hover:shadow-sm"
+            onClick={() => {
+              ifFiltered
+                ? (setIfFiltered(false), setTasks(defaultTasks))
+                : null;
+
+              setOpenSearch(true);
+            }}
+            className="outline:none flex items-center rounded-md hover:bg-slate-100 hover:shadow-sm focus:outline-none"
           >
-            <MagnifyingGlassIcon className="m-2 h-6 w-6 text-gray-500" />
+            {ifFiltered ? (
+              <XMarkIcon className="m-2 h-6 w-6 text-gray-500" />
+            ) : (
+              <MagnifyingGlassIcon className="m-2 h-6 w-6 text-gray-500" />
+            )}
           </button>
         </div>
 
@@ -243,6 +296,7 @@ function KanbanBoard() {
       id: generateId(), // Generate a unique ID (random number) for the task.
       columnId, // Associate the task with the specified column.
       content: `Task ${tasks.length + 1}`, //Default task
+      dateCreated: new Date(),
     };
 
     // adds new task to the lisat
@@ -263,8 +317,14 @@ function KanbanBoard() {
     // Create a new array of tasks, where the task with the given ID is updated with new content.
     const newTasks = tasks.map((task) => {
       // checks if the current task is not the one that needs to be updated.
-      if (task.id !== id) return task;
-      return { ...task, content };
+
+      if (task.id !== id) {
+        return task;
+      } else {
+        if (task.content === content) return task;
+        task.dateCreated = new Date();
+        return { ...task, content };
+      }
     });
 
     // Update the tasks state with the modified task list.

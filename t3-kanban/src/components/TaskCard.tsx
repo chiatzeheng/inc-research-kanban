@@ -83,6 +83,8 @@ function TaskCard({ task, deleteTask, updateTask, columnColor }: Props) {
           {...attributes}
           {...listeners}
         >
+          {/* remmeber to delete this */}
+          {task.dateCreated.toISOString()}
           <EllipsisHorizontalIcon className="h-8 w-8 text-slate-300" />
         </div>
         <textarea
@@ -90,6 +92,7 @@ function TaskCard({ task, deleteTask, updateTask, columnColor }: Props) {
           onInput={handleInput}
           className="h-auto w-full resize-none rounded border-none bg-transparent text-black focus:outline-none "
           value={task.content}
+          onClick={(e) => e.stopPropagation()}
           autoFocus
           placeholder="Task content here"
           onBlur={toggleEditMode}

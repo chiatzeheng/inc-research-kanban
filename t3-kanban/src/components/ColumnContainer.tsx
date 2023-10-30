@@ -158,7 +158,7 @@ function ColumnContainer({
       </div>
       {/* Column footer */}
       <button
-        className="border-columnBackgroundColor border-x-columnBackgroundColor hover:bg-mainBackgroundColor flex  items-center gap-2 rounded-md p-4 hover:text-rose-500 active:bg-black"
+        className="border-columnBackgroundColor border-x-columnBackgroundColor flex items-center gap-2 rounded-md p-4 font-semibold  text-black text-opacity-50 hover:bg-black hover:bg-opacity-5 hover:text-gray-700 active:bg-opacity-10"
         onClick={() => {
           createTask(column.id);
         }}
