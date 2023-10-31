@@ -77,14 +77,14 @@ function ColumnContainer({
       ref={setNodeRef}
       style={style}
       className={
-        "mx-5 flex h-[500px] max-h-[500px] w-72 flex-col rounded-3xl shadow-md " +
+        "mx-5 flex h-[500px] max-h-[500px] w-72 flex-col rounded-3xl pt-2 shadow-md " +
         column.color
       }
     >
       {/* This is the column's header color  */}
       <div
         className={
-          "text-md flex h-[60px] cursor-grab items-center justify-between rounded-3xl p-3 font-bold " +
+          "text-md flex h-[60px] cursor-grab justify-between rounded-3xl p-3 font-bold " +
           column.color
         }
         {...attributes}
@@ -94,16 +94,18 @@ function ColumnContainer({
           setEditMode(true);
         }}
       >
-        <div className={`flex items-center gap-2`}>
+        <div className={`flex gap-2`}>
           <div
-            className={`min-w-8 flex h-8 items-center justify-center rounded-3xl px-2 py-1 text-sm text-gray-700 text-opacity-40`}
+            className={`min-w-8 flex h-8 justify-center rounded-3xl px-2 py-1 text-sm text-gray-700 text-opacity-40`}
           >
             {tasks.length}
           </div>
 
           {/* When the column header is not being edited, show the title  */}
           {!editMode && (
-            <span className={`w-full ${column.textColor}`}>
+            <span
+              className={`block w-full break-all pt-1 ${column.textColor} `}
+            >
               {!editMode && column.title}
             </span>
           )}

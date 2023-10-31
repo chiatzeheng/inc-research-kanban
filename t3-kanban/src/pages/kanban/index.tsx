@@ -45,6 +45,7 @@ function KanbanBoard() {
   const [openSearch, setOpenSearch] = useState<boolean>(false);
   const [query, setQuery] = useState<string>("");
   const [ifFiltered, setIfFiltered] = useState<boolean>(false);
+  const [ifSort, setIfSort] = useState<boolean>(false);
 
   // Defines the user interaction criteria to activate the Pointer Sensor
   const sensors = useSensors(
@@ -87,11 +88,46 @@ function KanbanBoard() {
         setTasks(sortedTasks);
 
         break;
-      case "Most Viewed":
+
+      default:
+        break;
+    }
+    setIfSort(true);
+  }
+  function sortColumns(type: string) {
+    let sortedColumns;
+
+    switch (type) {
+      case "A-Z":
+        sortedColumns = [...columns].sort((a: Column, b: Column) =>
+          a.title.localeCompare(b.title),
+        );
+        setColumns(sortedColumns);
+        break;
+
+      case "Most Tasks":
+        const columnTaskCounts = columns.map((column) => {
+          const taskCount = tasks.filter(
+            (task) => task.columnId === column.id,
+          ).length;
+
+          return {
+            ...column,
+            taskCount,
+          };
+        });
+
+        const columnsSortedByTaskCount = [...columnTaskCounts].sort(
+          (a, b) => b.taskCount - a.taskCount,
+        );
+
+        setColumns(columnsSortedByTaskCount);
+
         break;
       default:
         break;
     }
+    setIfSort(true);
   }
 
   return (
@@ -100,6 +136,18 @@ function KanbanBoard() {
         <Banner />
         {/* provider makes use of the React Context API to share data between draggable and droppable components and hooks. */}
         <div className="my-5 flex justify-end gap-4">
+          {ifSort && (
+            <button
+              onClick={() => {
+                setColumns(defaultCols);
+                setTasks(defaultTasks);
+                setIfSort(false);
+              }}
+              className="-mr-5 flex items-center rounded-lg font-semibold text-gray-400 hover:bg-slate-100 hover:text-gray-600 focus:outline-none"
+            >
+              <XMarkIcon className="m-2 h-6 w-6 text-gray-500" />
+            </button>
+          )}
           <Menu as="div" className="relative inline-block text-left">
             <div>
               <Menu.Button className="flex items-center rounded-lg px-2 font-semibold text-gray-400 hover:bg-slate-100 hover:text-gray-600 focus:outline-none ">
@@ -118,7 +166,7 @@ function KanbanBoard() {
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <Menu.Items className="absolute left-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+              <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                 <div className="py-1">
                   <Menu.Item>
                     {({ active }) => (
@@ -131,7 +179,7 @@ function KanbanBoard() {
                         )}
                         onClick={() => sortTasks("Latest Update")}
                       >
-                        Latest Update
+                        Tasks: Latest Update
                       </button>
                     )}
                   </Menu.Item>
@@ -146,7 +194,24 @@ function KanbanBoard() {
                         )}
                         onClick={() => sortTasks("A-Z")}
                       >
-                        A-Z
+                        Tasks: A-Z
+                      </button>
+                    )}
+                  </Menu.Item>
+                </div>
+                <div className="py-1">
+                  <Menu.Item>
+                    {({ active }) => (
+                      <button
+                        className={classNames(
+                          active
+                            ? "bg-gray-100 text-gray-900"
+                            : "text-gray-700",
+                          "flex w-full justify-start px-4 py-2 text-sm",
+                        )}
+                        onClick={() => sortColumns("A-Z")}
+                      >
+                        Columns: A-Z
                       </button>
                     )}
                   </Menu.Item>
@@ -159,28 +224,12 @@ function KanbanBoard() {
                             : "text-gray-700",
                           "flex w-full justify-start px-4 py-2 text-sm",
                         )}
+                        onClick={() => sortColumns("Most Tasks")}
                       >
-                        Most Viewed
+                        Columns: Most Tasks
                       </button>
                     )}
                   </Menu.Item>
-                  <form method="POST" action="#">
-                    <Menu.Item>
-                      {({ active }) => (
-                        <button
-                          type="submit"
-                          className={classNames(
-                            active
-                              ? "bg-gray-100 text-gray-900"
-                              : "text-gray-700",
-                            "block w-full px-4 py-2 text-left text-sm",
-                          )}
-                        >
-                          Sign out
-                        </button>
-                      )}
-                    </Menu.Item>
-                  </form>
                 </div>
               </Menu.Items>
             </Transition>
@@ -188,9 +237,9 @@ function KanbanBoard() {
 
           <button
             onClick={() => {
-              ifFiltered
-                ? (setIfFiltered(false), setTasks(defaultTasks))
-                : null;
+              if (ifFiltered) {
+                setIfFiltered(false), setTasks(defaultTasks);
+              }
 
               setOpenSearch(true);
             }}

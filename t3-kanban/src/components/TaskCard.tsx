@@ -90,7 +90,7 @@ function TaskCard({ task, deleteTask, updateTask, columnColor }: Props) {
         <textarea
           ref={textAreaRef}
           onInput={handleInput}
-          className="h-auto w-full resize-none rounded border-none bg-transparent text-black focus:outline-none "
+          className="h-auto w-full resize-none rounded border-none bg-transparent px-2 py-1 text-black focus:outline-none "
           value={task.content}
           onClick={(e) => e.stopPropagation()}
           autoFocus
@@ -124,7 +124,7 @@ function TaskCard({ task, deleteTask, updateTask, columnColor }: Props) {
         className="task relative flex items-center rounded-lg  bg-white p-4 text-left text-black hover:shadow-md hover:ring-0 "
         onClick={toggleEditMode}
       >
-        <p className="my-auto h-auto w-full  overflow-x-hidden whitespace-pre-wrap text-black">
+        <p className="my-auto h-auto w-full overflow-x-hidden whitespace-pre-wrap break-words  px-2 py-1 text-black">
           {task.content}
         </p>
         <div
@@ -142,9 +142,9 @@ function TaskCard({ task, deleteTask, updateTask, columnColor }: Props) {
             onClick={() => {
               deleteTask(task.id);
             }}
-            className="bg-columnBackgroundColor absolute right-4 top-1/2 -translate-y-1/2 rounded stroke-white p-2 opacity-60 shadow-lg"
+            className="bg-columnBackgroundColor -translate-y-1.2 absolute right-0 mr-3 opacity-60 hover:bg-black hover:bg-opacity-5 "
           >
-            <TrashIcon className="h-5 w-5" />
+            <TrashIcon className="h-4 w-4" />
           </button>
         )}
       </div>
