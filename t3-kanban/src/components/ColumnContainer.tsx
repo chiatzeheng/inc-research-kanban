@@ -1,5 +1,6 @@
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
-import { Column, Id, Task } from "@/types";
+import { Column, Kanban, Task } from "@prisma/client";
+import { Id } from "@/types";
 import { CSS } from "@dnd-kit/utilities";
 import { useMemo, useState } from "react";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
@@ -15,7 +16,7 @@ interface Props {
   column: Column;
   deleteColumn: (id: Id) => void;
   updateColumn: (id: Id, title: string) => void;
-  createTask: (columnId: Id) => void;
+  createTask: (column: Column) => void;
   updateTask: (id: Id, content: string) => void;
   deleteTask: (id: Id) => void;
   tasks: Task[];
@@ -77,15 +78,13 @@ function ColumnContainer({
       ref={setNodeRef}
       style={style}
       className={
-        "mx-5 flex h-[500px] max-h-[500px] w-72 flex-col rounded-3xl pt-2 shadow-md " +
-        column.color
+        "mx-5 flex h-[500px] max-h-[500px] w-72 flex-col rounded-3xl pt-2 shadow-md "
       }
     >
       {/* This is the column's header color  */}
       <div
         className={
-          "text-md flex h-[60px] cursor-grab justify-between rounded-3xl p-3 font-bold " +
-          column.color
+          "text-md flex h-[60px] cursor-grab justify-between rounded-3xl p-3 font-bold "
         }
         {...attributes}
         {...listeners}
@@ -103,9 +102,7 @@ function ColumnContainer({
 
           {/* When the column header is not being edited, show the title  */}
           {!editMode && (
-            <span
-              className={`block w-full break-all pt-1 ${column.textColor} `}
-            >
+            <span className={`block w-full break-all pt-1 `}>
               {!editMode && column.title}
             </span>
           )}
@@ -114,8 +111,7 @@ function ColumnContainer({
           {editMode && (
             <input
               className={
-                "-ml-1 w-full rounded bg-gray-700 bg-opacity-5 px-1 outline-none " +
-                column.textColor
+                "-ml-1 w-full rounded bg-gray-700 bg-opacity-5 px-1 outline-none "
               }
               value={column.title}
               onChange={(e) => updateColumn(column.id, e.target.value)}
@@ -149,7 +145,6 @@ function ColumnContainer({
         <SortableContext items={tasksIds}>
           {tasks.map((task) => (
             <TaskCard
-              columnColor={column.color}
               key={task.id}
               task={task}
               deleteTask={deleteTask}
@@ -162,7 +157,7 @@ function ColumnContainer({
       <button
         className="border-columnBackgroundColor border-x-columnBackgroundColor flex items-center gap-2 rounded-md p-4 font-semibold  text-black text-opacity-50 hover:bg-black hover:bg-opacity-5 hover:text-gray-700 active:bg-opacity-10"
         onClick={() => {
-          createTask(column.id);
+          createTask(column);
         }}
       >
         <PlusIcon className="h-5 w-5" />

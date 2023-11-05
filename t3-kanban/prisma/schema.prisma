@@ -20,28 +20,13 @@ model Post {
 }
 
 model User {
-    id       String   @id @default(cuid())
-    name     String   @unique
-    kanbans  Kanban[]
-    tasks    Task[]   @relation("CreatedByUser")
-    assigned Task[]   @relation("AssignedToUser")
+    id    String @id @default(cuid())
+    name  String
+    email String @unique
+    // kanbans Kanban[]
+    // tasks   Task[]   @relation("CreatedByUser")
 
-    @@index([name])
-}
-
-model Task {
-    id          String   @id @default(cuid())
-    title       String
-    contentId   String?
-    taskContent Content? @relation(fields: [contentId], references: [id])
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
-    column      Column   @relation(fields: [columnId], references: [id])
-    columnId    String
-    assignedTo  User     @relation("AssignedToUser", fields: [userId], references: [id])
-    createdBy   User     @relation("CreatedByUser", fields: [createdById], references: [id])
-    userId      String
-    createdById String
+    @@index([id, email])
 }
 
 model Column {
@@ -54,19 +39,34 @@ model Column {
     kanbanId  String
 }
 
+model Task {
+    id          String   @id @default(cuid())
+    title       String?
+    taskContent Content? @relation(fields: [contentId], references: [id])
+    contentId   String?  @unique
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    column      Column   @relation(fields: [columnId], references: [id])
+    columnId    String
+
+    // createdBy   User   @relation("CreatedByUser", fields: [createdById], references: [id])
+    // userId      String
+    // createdById String
+}
+
 model Kanban {
     id        String   @id @default(cuid())
     title     String
     columns   Column[]
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-    owner     User     @relation(fields: [userId], references: [id])
-    userId    String
+    // owner     User     @relation(fields: [userId], references: [id])
+    // userId    String
 }
 
 model Content {
     id    String  @id @default(cuid())
     text  String
     links String?
-    Task  Task[]
+    task  Task?
 }

@@ -1,5 +1,7 @@
 import { useMemo, useState, Fragment, useEffect } from "react";
-import { Column, Id, Task } from "@/types";
+import { api } from "@/utils/api";
+// import { Column, Id, Task } from "@/types";
+import type { Column, Kanban, Task } from "@prisma/client";
 import ColumnContainer from "@/components/ColumnContainer";
 import Layout from "@/components/Layout";
 import Banner from "@/components/Banner";
@@ -25,17 +27,15 @@ import {
 import { defaultCols, defaultTasks } from "@/components/data";
 import SearchBarModal from "@/components/SearchBarModal";
 import { Menu, Transition } from "@headlessui/react";
+import { cornersOfRectangle } from "@dnd-kit/core/dist/utilities/algorithms/helpers";
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 function KanbanBoard() {
-  const [columns, setColumns] = useState<Column[]>(defaultCols);
-  const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
-
-  const [tasks, setTasks] = useState<Task[]>(defaultTasks);
-
+  // const [tasks, setTasks] = useState<Task[]>(defaultTasks);
+  // const [columns, setColumns] = useState<Column[]>(defaultCols);
   //Col is active only when it is being moved. activeColumn is a Column type which contains the id and title
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
 
@@ -46,7 +46,24 @@ function KanbanBoard() {
   const [query, setQuery] = useState<string>("");
   const [ifFiltered, setIfFiltered] = useState<boolean>(false);
   const [ifSort, setIfSort] = useState<boolean>(false);
+  const {
+    mutate: addTaskMutate,
+    isLoading: isAddingLoading,
+    isError: isAddingError,
+  } = api.task.addTask.useMutation();
 
+  // Use the updateTask mutation
+  const {
+    mutate: updateTaskMutate,
+    isLoading: isUpdatingLoading,
+    isError: isUpdatingError,
+  } = api.task.updateTask.useMutation();
+
+  const {
+    mutate: deleteTaskMutate,
+    isLoading: isDeleting,
+    isError: isDeleteError,
+  } = api.task.deleteTask.useMutation();
   // Defines the user interaction criteria to activate the Pointer Sensor
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -56,78 +73,179 @@ function KanbanBoard() {
     }),
   );
 
+  //remove this hard coded id aft stuff gets sorted out
+  const kanbanId = "clogwxon60000ftv8wra099a2";
+  const {
+    data: kanbanData,
+    isLoading: kanbanIsLoading,
+    isError: kanbanIsError,
+  } = api.kanban.getById.useQuery({ id: kanbanId });
+  console.log(kanbanData);
+  const allTasks = (kanbanData?.columns || []).flatMap(
+    (column) => column.tasks || [],
+  );
+
+  const [columns, setColumns] = useState<Column[]>(kanbanData?.columns || []);
+  const [tasks, setTasks] = useState<Task[]>(allTasks || []);
+
   useEffect(() => {
-    if (query.trim().length === 0 || query === undefined) {
-      setIfFiltered(false);
-      return setTasks(defaultTasks);
-    } else {
-      const filteredTasks = tasks.filter((task) =>
-        task.content.toLowerCase().includes(query.toLowerCase()),
+    if (kanbanData) {
+      setColumns(kanbanData.columns || []);
+      const newTasks = kanbanData.columns.reduce<Task[]>(
+        (acc, column) => [...acc, ...column.tasks],
+        [],
       );
-      setIfFiltered(true);
-      return setTasks(filteredTasks);
+      setTasks(newTasks);
     }
+  }, [kanbanData]);
+  const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
+  useEffect(() => {
+    // if (query.trim().length === 0 || query === undefined) {
+    //   setIfFiltered(false);
+    //   return setTasks(defaultTasks);
+    // } else {
+    //   const filteredTasks = tasks.filter((task) =>
+    //     task.content.toLowerCase().includes(query.toLowerCase()),
+    //   );
+    //   setIfFiltered(true);
+    //   return setTasks(filteredTasks);
+    // }
   }, [query]);
 
   function sortTasks(type: string) {
-    let sortedTasks;
-    switch (type) {
-      case "Latest Update":
-        sortedTasks = [...tasks].sort(
-          (a: Task, b: Task) =>
-            b.dateCreated.getTime() - a.dateCreated.getTime(),
-        );
-        setTasks(sortedTasks);
-        break;
-      case "A-Z":
-        sortedTasks = [...tasks].sort((a, b) =>
-          a.content.localeCompare(b.content),
-        );
+    // let sortedTasks;
+    // switch (type) {
+    //   case "Latest Update":
+    //     sortedTasks = [...tasks].sort(
+    //       (a: Task, b: Task) =>
+    //         b.dateCreated.getTime() - a.dateCreated.getTime(),
+    //     );
+    //     setTasks(sortedTasks);
+    //     break;
+    //   case "A-Z":
+    //     sortedTasks = [...tasks].sort((a, b) =>
+    //       a.content.localeCompare(b.content),
+    //     );
 
-        console.log("hello");
-        setTasks(sortedTasks);
+    //     console.log("hello");
+    //     setTasks(sortedTasks);
 
-        break;
+    //     break;
 
-      default:
-        break;
-    }
+    //   default:
+    //     break;
+    // }
     setIfSort(true);
   }
   function sortColumns(type: string) {
-    let sortedColumns;
+    // let sortedColumns;
 
-    switch (type) {
-      case "A-Z":
-        sortedColumns = [...columns].sort((a: Column, b: Column) =>
-          a.title.localeCompare(b.title),
-        );
-        setColumns(sortedColumns);
-        break;
+    // switch (type) {
+    //   case "A-Z":
+    //     sortedColumns = [...columns].sort((a: Column, b: Column) =>
+    //       a.title.localeCompare(b.title),
+    //     );
+    //     setColumns(sortedColumns);
+    //     break;
 
-      case "Most Tasks":
-        const columnTaskCounts = columns.map((column) => {
-          const taskCount = tasks.filter(
-            (task) => task.columnId === column.id,
-          ).length;
+    //   case "Most Tasks":
+    //     const columnTaskCounts = columns.map((column) => {
+    //       const taskCount = tasks.filter(
+    //         (task) => task.columnId === column.id,
+    //       ).length;
 
-          return {
-            ...column,
-            taskCount,
-          };
-        });
+    //       return {
+    //         ...column,
+    //         taskCount,
+    //       };
+    //     });
 
-        const columnsSortedByTaskCount = [...columnTaskCounts].sort(
-          (a, b) => b.taskCount - a.taskCount,
-        );
+    //     const columnsSortedByTaskCount = [...columnTaskCounts].sort(
+    //       (a, b) => b.taskCount - a.taskCount,
+    //     );
 
-        setColumns(columnsSortedByTaskCount);
+    //     setColumns(columnsSortedByTaskCount);
 
-        break;
-      default:
-        break;
-    }
+    //     break;
+    //   default:
+    //     break;
+    // }
     setIfSort(true);
+  }
+
+  function createTask(column: Column) {
+    const newTempTask = {
+      columnId: column.id,
+      title: "Untitled",
+      taskContentText: "",
+    };
+    addTaskMutate(newTempTask, {
+      onSuccess: (task) => {
+        setTasks((currentTasks) => [...currentTasks, task]);
+      },
+      onError: (error) => {
+        console.error("Error creating card:", error);
+      },
+    });
+  }
+
+  function updateTask(
+    task: Task,
+    changes: { title?: string; taskContentText?: string },
+  ) {
+    updateTaskMutate(
+      {
+        id: task.id,
+        ...changes,
+      },
+      {
+        onSuccess: (updatedTaskData) => {
+          // Handle the updated task. For example, you could refresh your tasks list or update local state
+          console.log("Task updated successfully");
+          function updateTaskInArray(tasks: Task[], updatedTaskData: any) {
+            return tasks.map((task: Task) => {
+              if (task.id === updatedTaskData.id) {
+                // Found the matching task, return a new object with the updated information
+                return {
+                  ...task,
+                  ...updatedTaskData,
+                };
+              }
+              // This isn't the task we're looking for, so we return the original
+              return task;
+            });
+          }
+
+          setTasks((currentTasks) =>
+            updateTaskInArray(currentTasks, updatedTaskData),
+          );
+        },
+        onError: (error) => {
+          // Handle the error case
+          console.error("Error updating task:", error);
+          // Update the UI to show an error message if needed
+        },
+      },
+    );
+  }
+
+  function deleteTask(task: Task) {
+    let taskId = task.id;
+    deleteTaskMutate(
+      { id: taskId },
+      {
+        onSuccess: () => {
+          // Remove the task from the local state as well
+          setTasks((currentTasks) =>
+            currentTasks.filter((task) => task.id !== taskId),
+          );
+          console.log("Deleted Task");
+        },
+        onError: (error) => {
+          console.error("Error deleting task:", error);
+        },
+      },
+    );
   }
 
   return (
@@ -138,11 +256,11 @@ function KanbanBoard() {
         <div className="my-5 flex justify-end gap-4">
           {ifSort && (
             <button
-              onClick={() => {
-                setColumns(defaultCols);
-                setTasks(defaultTasks);
-                setIfSort(false);
-              }}
+              // onClick={() => {
+              //   setColumns(defaultCols);
+              //   setTasks(defaultTasks);
+              //   setIfSort(false);
+              // }}
               className="-mr-5 flex items-center rounded-lg font-semibold text-gray-400 hover:bg-slate-100 hover:text-gray-600 focus:outline-none"
             >
               <XMarkIcon className="m-2 h-6 w-6 text-gray-500" />
@@ -339,46 +457,46 @@ function KanbanBoard() {
   // CUD OF TASKS =======================================================================================================
 
   // Creates a new task and adds it to the list of tasks.
-  function createTask(columnId: Id) {
-    // Generate a unique task ID and initialize a new task object.
-    const newTask: Task = {
-      id: generateId(), // Generate a unique ID (random number) for the task.
-      columnId, // Associate the task with the specified column.
-      content: `Task ${tasks.length + 1}`, //Default task
-      dateCreated: new Date(),
-    };
+  // function createTask(columnId: Id) {
+  //   // Generate a unique task ID and initialize a new task object.
+  //   const newTask: Task = {
+  //     // id: generateId(), // Generate a unique ID (random number) for the task.
+  //     columnId, // Associate the task with the specified column.
+  //     taskContent: `Task ${tasks.length + 1}`, //Default task
+  //     createdAt: new Date(),
+  //   };
 
-    // adds new task to the lisat
-    setTasks([...tasks, newTask]);
-  }
+  //   // adds new task to the lisat
+  //   setTasks([...tasks, newTask]);
+  // }
 
   // Deletes a task with the specified ID from the list of tasks.
-  function deleteTask(id: Id) {
-    // Create a new array of tasks, excluding the task with the given ID.
-    const newTasks = tasks.filter((task) => task.id !== id);
+  // function deleteTask(id: Id) {
+  //   // Create a new array of tasks, excluding the task with the given ID.
+  //   const newTasks = tasks.filter((task) => task.id !== id);
 
-    // Update the tasks state with the new array, effectively removing the task.
-    setTasks(newTasks);
-  }
+  //   // Update the tasks state with the new array, effectively removing the task.
+  //   setTasks(newTasks);
+  // }
 
   // Update the content of a task
-  function updateTask(id: Id, content: string) {
-    // Create a new array of tasks, where the task with the given ID is updated with new content.
-    const newTasks = tasks.map((task) => {
-      // checks if the current task is not the one that needs to be updated.
+  // function updateTask(id: Id, content: string) {
+  //   // Create a new array of tasks, where the task with the given ID is updated with new content.
+  //   const newTasks = tasks.map((task) => {
+  //     // checks if the current task is not the one that needs to be updated.
 
-      if (task.id !== id) {
-        return task;
-      } else {
-        if (task.content === content) return task;
-        task.dateCreated = new Date();
-        return { ...task, content };
-      }
-    });
+  //     if (task.id !== id) {
+  //       return task;
+  //     } else {
+  //       if (task.content === content) return task;
+  //       task.dateCreated = new Date();
+  //       return { ...task, content };
+  //     }
+  //   });
 
-    // Update the tasks state with the modified task list.
-    setTasks(newTasks);
-  }
+  //   // Update the tasks state with the modified task list.
+  //   setTasks(newTasks);
+  // }
 
   // =====================================================================================================================
   // CRUD OF COLS  =======================================================================================================
@@ -523,10 +641,10 @@ function KanbanBoard() {
 
 // =====================================================================================================================
 
-function generateId() {
-  /* Generate a random number between 0 and 10000 */
-  return Math.floor(Math.random() * 10001);
-}
+// function generateId() {
+//   /* Generate a random number between 0 and 10000 */
+//   return Math.floor(Math.random() * 10001);
+// }
 
 // =========================================================================
 // This is to generate a color for each columns  (not used??)
