@@ -30,6 +30,6 @@
     "**/*.cjs",
     "**/*.mjs",
     ".next/types/**/*.ts"
-  ],
+, "src/components/ColourSort.ts"  ],
   "exclude": ["node_modules"]
 }

@@ -12,10 +12,9 @@ interface Props {
     task: Task,
     changes: { title?: string; taskContentText?: string },
   ) => void;
-  columnColor: string;
 }
 
-function TaskCard({ task, deleteTask, updateTask, columnColor }: Props) {
+function TaskCard({ task, deleteTask, updateTask }: Props) {
   const [mouseIsOver, setMouseIsOver] = useState(false);
   const [editMode, setEditMode] = useState(false);
 

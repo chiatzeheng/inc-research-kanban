@@ -46,7 +46,7 @@ model Task {
     contentId   String?  @unique
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
-    column      Column   @relation(fields: [columnId], references: [id])
+    column      Column   @relation(fields: [columnId], references: [id], onDelete: Cascade)
     columnId    String
 
     // createdBy   User   @relation("CreatedByUser", fields: [createdById], references: [id])

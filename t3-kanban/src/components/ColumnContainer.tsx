@@ -5,6 +5,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { useMemo, useState } from "react";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import TaskCard from "./TaskCard";
+import DeleteConfirm from "./DeleteConfirmModal";
 
 // Component: ColumnContainer
 // This component represents a single column in a Kanban board.
@@ -13,12 +14,16 @@ import TaskCard from "./TaskCard";
 // Interface so that the props passed in needs to have all these properties
 interface Props {
   // the property column is found in types.ts, the rest are mostly functions
+
   column: Column;
-  deleteColumn: (id: Id) => void;
+  deleteColumn: (column: Column) => void;
   updateColumn: (id: Id, title: string) => void;
   createTask: (column: Column) => void;
-  updateTask: (id: Id, content: string) => void;
-  deleteTask: (id: Id) => void;
+  updateTask: (
+    task: Task,
+    changes: { title?: string; taskContentText?: string },
+  ) => void;
+  deleteTask: (task: Task) => void;
   tasks: Task[];
 }
 
@@ -33,7 +38,8 @@ function ColumnContainer({
   updateTask,
 }: Props) {
   const [editMode, setEditMode] = useState(false);
-
+  const [open, setOpen] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
   // Memoize the array of task IDs by mapping the tasks array
   // This ensures the IDs are recalculated only when tasks change.
   const tasksIds = useMemo(() => {
@@ -130,9 +136,9 @@ function ColumnContainer({
 
         {/* Column Deletion*/}
         <button
-          className="rounded px-1 py-2 "
+          className="rounded px-1 py-2 hover:bg-black hover:bg-opacity-5 hover:text-gray-700 active:bg-opacity-10 "
           onClick={() => {
-            deleteColumn(column.id);
+            setOpen(true);
           }}
         >
           <TrashIcon className="h-5 w-5" />
@@ -163,6 +169,13 @@ function ColumnContainer({
         <PlusIcon className="h-5 w-5" />
         Add task
       </button>
+      <DeleteConfirm
+        open={open}
+        setOpen={setOpen}
+        setDeleteConfirm={setDeleteConfirm}
+        deleteColumn={deleteColumn}
+        column={column}
+      />
     </div>
   );
 }

@@ -10,11 +10,7 @@ interface CardModalProps {
   task: Task;
 }
 
-export default function CardModal({
-  openCard,
-  setOpenCard,
-  Task,
-}: CardModalProps) {
+export default function CardModal({ openCard, setOpenCard }: CardModalProps) {
   //   const [openCard, setOpenCard] = useState(true);
 
   return (

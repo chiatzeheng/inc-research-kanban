@@ -105,6 +105,9 @@ export const TaskRouter = createTRPCRouter({
       const taskData = await ctx.db.task.delete({
         where: { id: input.id },
       });
+      const contentData = await ctx.db.content.delete({
+        where: { id: taskData.contentId ?? undefined },
+      });
       return taskData;
     }),
 

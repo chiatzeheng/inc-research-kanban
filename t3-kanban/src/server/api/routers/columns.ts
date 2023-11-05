@@ -47,9 +47,30 @@ export const ColumnRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       // Changed from query to mutation
-      const columnData = await ctx.db.column.delete({
+
+      // const columnData = await ctx.db.column.delete({
+      //   where: { id: input.id },
+      //   include: {
+      //     tasks: true, // Include tasks to fetch them
+      //   },
+      // });
+
+      // return columnData;
+
+      const tasks = await ctx.db.task.findMany({
+        where: { columnId: input.id },
+      });
+
+      // Then, delete all the tasks
+      await Promise.all(
+        tasks.map((task) => ctx.db.task.delete({ where: { id: task.id } })),
+      );
+
+      // Finally, delete the column
+      const deletedColumn = await ctx.db.column.delete({
         where: { id: input.id },
       });
-      return columnData;
+
+      return deletedColumn;
     }),
 });
